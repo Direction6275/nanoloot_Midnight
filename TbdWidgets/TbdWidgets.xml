@@ -1,0 +1,7 @@
+<Ui>
+    <Frame name="NanoLootWidgetsUI" mixin="NanoLootWidgetsMixin" parent="UIParent">
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+</Ui>
