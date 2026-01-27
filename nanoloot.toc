@@ -1,10 +1,10 @@
-## Interface: 100002
+## Interface: 120000
 ## X-Curse-Project-ID: 733068
 ## Title: |cff9560FFnano|r|cffd5bfffloot|r
 ## Notes: A tiny window for tracking who looted what.
 ## URL: https://www.curseforge.com/wow/addons/nanoloot
 ## Author: neurotech
-## Version: v3.5.0
+## Version: v3.5.1
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: NanoLootDB

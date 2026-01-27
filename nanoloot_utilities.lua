@@ -60,17 +60,29 @@ end
 
 local function LootInfo(...)
     local info        = { ... }
-    local link        = info[1]:match("(|c.+|r)")
+    local link        = info[1] and info[1]:match("(|c.+|r)") or nil
     local guid        = info[12]
     local player      = info[2]
-    local class       = select(2, GetPlayerInfoByGUID(guid))
-    local classColor  = C_ClassColor.GetClassColor(class)
-    local classPlayer = classColor:WrapTextInColorCode(player)
-    local rarity      = select(3, GetItemInfo(link))
-    local itemLevel   = select(4, GetItemInfo(link))
-    local itemID      = info[1]:match("item:(%d*):")
-    local itemType    = select(12, GetItemInfo(link))
-    local itemSubType = select(13, GetItemInfo(link))
+    local class       = guid and select(2, GetPlayerInfoByGUID(guid)) or nil
+    local classColor  = class and C_ClassColor.GetClassColor(class) or nil
+    local classPlayer = player
+
+    if classColor and player then
+        classPlayer = classColor:WrapTextInColorCode(player)
+    end
+
+    local itemName, _, itemQuality, itemLevel, _, _, _, _, _, _, _, classID, subclassID = nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil
+
+    if link then
+        itemName, _, itemQuality, itemLevel, _, _, _, _, _, _, _, classID, subclassID = GetItemInfo(link)
+    end
+
+    local rarity      = itemQuality or 0
+    itemLevel         = itemLevel or 0
+    local itemID      = info[1] and info[1]:match("item:(%d*):") or nil
+    local itemType    = classID or 0
+    local itemSubType = subclassID or 0
 
     return player, classPlayer, link, rarity, itemLevel, itemID, itemType, itemSubType
 end

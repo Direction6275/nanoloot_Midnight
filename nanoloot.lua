@@ -8,6 +8,9 @@ local function NanoLootEventHandler(_, event, ...)
 
         local currentPlayer = UnitName("player")
         local player, classPlayer, link, rarity, itemLevel, itemID, itemType, itemSubType = NanoLoot.Utilities.LootInfo(...)
+        if not player or not link then
+            return
+        end
         local truncatedLink = NanoLoot.Utilities.GetTruncatedLink(link)
         local playerNoRealm = player:gsub("%-.+", "")
         local classPlayerNoRealm = classPlayer:gsub("%-.+", "")
