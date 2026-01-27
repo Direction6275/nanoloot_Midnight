@@ -1,51 +1,54 @@
-NanoLoot = {}
+NanoLoot = NanoLoot or {}
 
+local Globals = {}
 local LibStub = _G.LibStub
-local LSM
+local LSM = nil
 if LibStub then
-    LSM = LibStub("LibSharedMedia-3.0")
+    LSM = LibStub("LibSharedMedia-3.0", true)
 end
 
-local NANOLOOT_LOGO = "|cff9560FFnano|r|cffd5bfffloot|r"
-local NANOLOOT_FONT_PATH = "Interface\\AddOns\\nanoloot\\Elements\\Fonts\\elements.ttf"
-local NANOLOOT_PADDING = 8
-local NANOLOOT_BAR_HEIGHT = 20
-local NANOLOOT_PANEL_HEIGHT = NANOLOOT_BAR_HEIGHT * 2
-local NANOLOOT_PANEL_WIDTH = 320
-local NANOLOOT_LOOTLIST_LIMIT = 20
-
-local NANOLOOT_SKIP_BUTTON_BG = { 90 / 255, 23 / 255, 45 / 255 }
-local NANOLOOT_SKIP_BUTTON_BORDER = { 30 / 255, 4 / 255, 12 / 255 }
-local NANOLOOT_SKIP_BUTTON_LABEL = { 255 / 255, 0 / 255, 84 / 255 }
-local NANOLOOT_SKIP_BUTTON_LABEL_SHADOW = { 64 / 255, 2 / 255, 22 / 255 }
-local NANOLOOT_SKIP_BUTTON_HIGHLIGHT = { 107 / 255, 47 / 255, 66 / 255 }
-
-local NANOLOOT_MSG_BUTTON_BG = { 23 / 255, 90 / 255, 56 / 255 }
-local NANOLOOT_MSG_BUTTON_BORDER = { 2 / 255, 21 / 255, 12 / 255 }
-local NANOLOOT_MSG_BUTTON_LABEL = { 20 / 255, 236 / 255, 127 / 255 }
-local NANOLOOT_MSG_BUTTON_LABEL_SHADOW = { 2 / 255, 58 / 255, 29 / 255 }
-local NANOLOOT_MSG_BUTTON_HIGHLIGHT = { 47 / 255, 107 / 255, 76 / 255 }
-
-NanoLoot.Globals = {
-    LSM = LSM,
-    NANOLOOT_LOGO = NANOLOOT_LOGO,
-    NANOLOOT_FONT_PATH = NANOLOOT_FONT_PATH,
-    NANOLOOT_PADDING = NANOLOOT_PADDING,
-    NANOLOOT_BAR_HEIGHT = NANOLOOT_BAR_HEIGHT,
-    NANOLOOT_PANEL_HEIGHT = NANOLOOT_PANEL_HEIGHT,
-    NANOLOOT_PANEL_WIDTH = NANOLOOT_PANEL_WIDTH,
-    NANOLOOT_LOOTLIST_LIMIT = NANOLOOT_LOOTLIST_LIMIT,
-
-    Buttons = {
-        NANOLOOT_SKIP_BUTTON_BG = NANOLOOT_SKIP_BUTTON_BG,
-        NANOLOOT_SKIP_BUTTON_BORDER = NANOLOOT_SKIP_BUTTON_BORDER,
-        NANOLOOT_SKIP_BUTTON_LABEL = NANOLOOT_SKIP_BUTTON_LABEL,
-        NANOLOOT_SKIP_BUTTON_LABEL_SHADOW = NANOLOOT_SKIP_BUTTON_LABEL_SHADOW,
-        NANOLOOT_SKIP_BUTTON_HIGHLIGHT = NANOLOOT_SKIP_BUTTON_HIGHLIGHT,
-        NANOLOOT_MSG_BUTTON_BG = NANOLOOT_MSG_BUTTON_BG,
-        NANOLOOT_MSG_BUTTON_BORDER = NANOLOOT_MSG_BUTTON_BORDER,
-        NANOLOOT_MSG_BUTTON_LABEL = NANOLOOT_MSG_BUTTON_LABEL,
-        NANOLOOT_MSG_BUTTON_LABEL_SHADOW = NANOLOOT_MSG_BUTTON_LABEL_SHADOW,
-        NANOLOOT_MSG_BUTTON_HIGHLIGHT = NANOLOOT_MSG_BUTTON_HIGHLIGHT
+Globals.LSM = LSM
+Globals.Logo = "|cff9560FFnano|r|cffd5bfffloot|r"
+Globals.Media = {
+    FontPath = "Interface\\AddOns\\nanoloot\\Elements\\Fonts\\elements.ttf"
+}
+Globals.Layout = {
+    Padding = 8,
+    BarHeight = 20,
+    PanelHeight = 40,
+    PanelWidth = 320,
+    LootListLimit = 20
+}
+Globals.Buttons = {
+    Skip = {
+        Background = { 90 / 255, 23 / 255, 45 / 255 },
+        Border = { 30 / 255, 4 / 255, 12 / 255 },
+        Label = { 255 / 255, 0 / 255, 84 / 255 },
+        LabelShadow = { 64 / 255, 2 / 255, 22 / 255 },
+        Highlight = { 107 / 255, 47 / 255, 66 / 255 }
+    },
+    Message = {
+        Background = { 23 / 255, 90 / 255, 56 / 255 },
+        Border = { 2 / 255, 21 / 255, 12 / 255 },
+        Label = { 20 / 255, 236 / 255, 127 / 255 },
+        LabelShadow = { 2 / 255, 58 / 255, 29 / 255 },
+        Highlight = { 47 / 255, 107 / 255, 76 / 255 }
     }
+}
+
+NanoLoot.Globals = Globals
+
+NanoLoot.Defaults = {
+    LootList = {},
+    TitleBarBackground = Elements.Palette.RGB.PURPLE,
+    UseClassColour = false,
+    HideWhenEmpty = false,
+    UseCustomFont = false,
+    CustomFontName = nil,
+    CustomFontPath = nil,
+    FontSize = 12,
+    PanelPoint = "TOPLEFT",
+    PanelRelativePoint = "TOPLEFT",
+    PanelPositionX = 10,
+    PanelPositionY = -10
 }

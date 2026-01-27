@@ -1,151 +1,79 @@
-local function NanoLootEventHandler(_, event, ...)
-    if event == "CHAT_MSG_LOOT" then
-        local info = { ... }
-        local guid = info[12]
-        if not guid then
-            return
-        end
-
-        local currentPlayer = UnitName("player")
-        local player, classPlayer, link, rarity, itemLevel, itemID, itemType, itemSubType = NanoLoot.Utilities.LootInfo(...)
-        local truncatedLink = NanoLoot.Utilities.GetTruncatedLink(link)
-        local playerNoRealm = player:gsub("%-.+", "")
-        local classPlayerNoRealm = classPlayer:gsub("%-.+", "")
-        local isSelf = playerNoRealm == currentPlayer
-        local inInstance, instanceType = IsInInstance()
-        local inDungeonOrRaid = instanceType == 'party' or instanceType == 'raid'
-        local listNotAtMax = #NanoLootDB.LootList ~= NanoLoot.Globals.NANOLOOT_LOOTLIST_LIMIT
-        local rareOrEpic = rarity == 3 or rarity == 4
-        local equippable = itemType == 2 or itemType == 4 or itemType == 9
-        local shouldHandle = inInstance and inDungeonOrRaid and listNotAtMax and rareOrEpic and equippable
-
-        -- Debug:
-        -- shouldHandle = true
-
-        if shouldHandle then
-            local loot = {
-                classPlayer = classPlayer,
-                itemLevel = itemLevel,
-                link = truncatedLink,
-                originalLink = link,
-                player = player,
-                playerNoRealm = playerNoRealm,
-                classPlayerNoRealm = classPlayerNoRealm,
-                isSelf = isSelf,
-                itemType = itemType,
-                itemSubType = itemSubType
-            }
-            table.insert(NanoLootDB.LootList, loot)
-            GetItemInfo(link)
-            NanoLoot.UI.RenderLoot()
-        end
-    end
-end
-
-local function InitialiseNanoLoot()
-    local NanoLootListener = CreateFrame("Frame")
-    NanoLootListener:RegisterEvent("CHAT_MSG_LOOT")
-    NanoLootListener:SetScript("OnEvent", NanoLootEventHandler)
-
-    local NanoLootPanel = NanoLoot.UI.CreateMainPanel()
-    local NanoLootTitleBar = NanoLoot.UI.CreateTitleBar(NanoLootPanel)
-    NanoLoot.UI.CreateWaitingBar(NanoLootTitleBar)
-
-    NanoLoot.UI.SetMainPanelSize()
-
-    NanoLoot.UI.RenderLoot()
-end
-
-local loadingEvents = CreateFrame("Frame")
-loadingEvents:RegisterEvent("ADDON_LOADED")
-loadingEvents:RegisterEvent("PLAYER_ENTERING_WORLD")
-loadingEvents:RegisterEvent("PLAYER_LOGOUT")
-
-loadingEvents:SetScript(
-    "OnEvent",
-    function(_, event, arg1)
-        if event == "ADDON_LOADED" and arg1 == "nanoloot" then
-            if not NanoLootDB then
-                NanoLootDB = {}
-                NanoLootDB.LootList = {}
-                NanoLootDB.TitleBarBackground = Elements.Palette.RGB.PURPLE
-                NanoLootDB.UseClassColour = false
-                NanoLootDB.HideWhenEmpty = false
-                NanoLootDB.UseCustomFont = false
-                NanoLootDB.CustomFontName = nil
-                NanoLootDB.CustomFontPath = nil
-                NanoLootDB.FontSize = 12
-                NanoLootDB.PanelPoint = "TOPLEFT"
-                NanoLootDB.PanelRelativePoint = "TOPLEFT"
-                NanoLootDB.PanelPositionX = 10
-                NanoLootDB.PanelPositionY = -10
+local function ApplyDefaults(target, defaults)
+    for key, value in pairs(defaults) do
+        if target[key] == nil then
+            if type(value) == "table" then
+                target[key] = {}
+                ApplyDefaults(target[key], value)
             else
-                if not NanoLootDB.LootList then
-                    NanoLootDB.LootList = {}
-                end
-
-                if not NanoLootDB.TitleBarBackground then
-                    NanoLootDB.TitleBarBackground = Elements.Palette.RGB.PURPLE
-                end
-
-                if not NanoLootDB.UseClassColour then
-                    NanoLootDB.UseClassColour = false
-                end
-
-                if not NanoLootDB.UseCustomFont then
-                    NanoLootDB.UseCustomFont = false
-                end
-
-                if not NanoLootDB.CustomFontName then
-                    NanoLootDB.CustomFontName = nil
-                end
-
-                if not NanoLootDB.CustomFontPath then
-                    NanoLootDB.CustomFontPath = nil
-                end
-
-                if not NanoLootDB.FontSize then
-                    NanoLootDB.FontSize = 12
-                end
-
-                if not NanoLootDB.HideWhenEmpty then
-                    NanoLootDB.HideWhenEmpty = false
-                end
-
-                if not NanoLootDB.PanelPoint then
-                    NanoLootDB.PanelPoint = "TOPLEFT"
-                end
-
-                if not NanoLootDB.PanelRelativePoint then
-                    NanoLootDB.PanelRelativePoint = "TOPLEFT"
-                end
-
-                if not NanoLootDB.PanelPositionX then
-                    NanoLootDB.PanelPositionX = 10
-                end
-
-                if not NanoLootDB.PanelPositionY then
-                    NanoLootDB.PanelPositionY = -10
-                end
+                target[key] = value
             end
-
-            InitialiseNanoLoot()
-            NanoLoot.Config.CreateConfigFrame()
-
-            loadingEvents:UnregisterEvent("ADDON_LOADED")
-        end
-
-        if event == "PLAYER_ENTERING_WORLD" then
-            if _G["NANOLOOT_PANEL_BASE"] then
-                Elements.Utilities.SetPixelScaling(_G["NANOLOOT_PANEL_BASE"])
-            end
-            loadingEvents:UnregisterEvent("PLAYER_ENTERING_WORLD")
-        end
-
-        if event == "PLAYER_LOGOUT" then
-            if NanoLootDB and NanoLootDB.LootList then
-                NanoLootDB.LootList = {}
-            end
+        elseif type(value) == "table" and type(target[key]) == "table" then
+            ApplyDefaults(target[key], value)
         end
     end
-)
+end
+
+local function InitializeDatabase()
+    NanoLootDB = NanoLootDB or {}
+    ApplyDefaults(NanoLootDB, NanoLoot.Defaults)
+
+    if not NanoLootDB.LootList then
+        NanoLootDB.LootList = {}
+    end
+end
+
+local function ShouldHandleLoot(lootInfo)
+    local inInstance, instanceType = IsInInstance()
+    local inDungeonOrRaid = instanceType == "party" or instanceType == "raid"
+    local listNotAtMax = #NanoLootDB.LootList ~= NanoLoot.Globals.Layout.LootListLimit
+    local rareOrEpic = lootInfo.rarity == 3 or lootInfo.rarity == 4
+    local equippable = lootInfo.itemType == 2 or lootInfo.itemType == 4 or lootInfo.itemType == 9
+
+    return inInstance and inDungeonOrRaid and listNotAtMax and rareOrEpic and equippable
+end
+
+local function HandleLootEvent(...)
+    local lootInfo = NanoLoot.Utilities.BuildLootInfo(...)
+    if not lootInfo then
+        return
+    end
+
+    if ShouldHandleLoot(lootInfo) then
+        table.insert(NanoLootDB.LootList, lootInfo)
+        GetItemInfo(lootInfo.originalLink)
+        NanoLoot.UI.RenderLoot()
+    end
+end
+
+local function InitializeAddon()
+    InitializeDatabase()
+    NanoLoot.UI.Initialize()
+    NanoLoot.Config.CreateConfigFrame()
+end
+
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("ADDON_LOADED")
+eventFrame:RegisterEvent("CHAT_MSG_LOOT")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventFrame:RegisterEvent("PLAYER_LOGOUT")
+
+eventFrame:SetScript("OnEvent", function(_, event, ...)
+    if event == "ADDON_LOADED" then
+        local addonName = ...
+        if addonName == "nanoloot" then
+            InitializeAddon()
+            eventFrame:UnregisterEvent("ADDON_LOADED")
+        end
+    elseif event == "CHAT_MSG_LOOT" then
+        HandleLootEvent(...)
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        if _G["NANOLOOT_PANEL_BASE"] then
+            Elements.Utilities.SetPixelScaling(_G["NANOLOOT_PANEL_BASE"])
+        end
+        eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    elseif event == "PLAYER_LOGOUT" then
+        if NanoLootDB and NanoLootDB.LootList then
+            NanoLootDB.LootList = {}
+        end
+    end
+end)
