@@ -10,10 +10,10 @@
 ## SavedVariables: NanoLootDB
 
 Elements\embeds.xml
-TbdWidgets\Dropdown.lua
-TbdWidgets\Dropdown.xml
 TbdWidgets\Listview.lua
 TbdWidgets\Listview.xml
+TbdWidgets\Dropdown.lua
+TbdWidgets\Dropdown.xml
 nanoloot_globals.lua
 nanoloot_utilities.lua
 nanoloot_ui.lua
