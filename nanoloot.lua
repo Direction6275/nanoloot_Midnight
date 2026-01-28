@@ -66,7 +66,7 @@ loadingEvents:RegisterEvent("PLAYER_LOGOUT")
 loadingEvents:SetScript(
     "OnEvent",
     function(_, event, arg1)
-        if event == "ADDON_LOADED" and arg1 == "nanoloot" then
+        if event == "ADDON_LOADED" and arg1 == "nanoloot_Midnight" then
             if not NanoLootDB then
                 NanoLootDB = {}
                 NanoLootDB.LootList = {}
