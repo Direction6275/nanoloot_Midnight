@@ -7,7 +7,7 @@ if LibStub then
 end
 
 local NANOLOOT_LOGO = "|cff9560FFnano|r|cffd5bfffloot|r"
-local NANOLOOT_FONT_PATH = "Interface\\AddOns\\nanoloot\\Elements\\Fonts\\elements.ttf"
+local NANOLOOT_FONT_PATH = "Interface\\AddOns\\nanoloot_Midnight\\Elements\\Fonts\\elements.ttf"
 local NANOLOOT_PADDING = 8
 local NANOLOOT_BAR_HEIGHT = 20
 local NANOLOOT_PANEL_HEIGHT = NANOLOOT_BAR_HEIGHT * 2

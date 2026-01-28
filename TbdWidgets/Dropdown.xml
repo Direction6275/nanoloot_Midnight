@@ -1,7 +1,7 @@
 <Ui>
     <Frame name="NanoLootWidgetsDropDownListviewItemTemplate" mixin="NanoLootWidgetsDropDownListviewItemTemplateMixin" enableMouse="true" virtual="true">
         <Layers>
-            <Layer level="BACKGROND">
+            <Layer level="BACKGROUND">
                 <Texture parentKey="background">
                     <Color r="0" g="0" b="0" a="0.9"/>
                 </Texture>
