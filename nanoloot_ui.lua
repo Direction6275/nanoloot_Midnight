@@ -111,7 +111,7 @@ local function CreateTitleBar(parent)
     clearAllButton:SetScript("OnClick", function(_, motion)
         if not motion then return end
         NanoLootDB.LootList = {}
-        PlaySoundFile([[Interface\Addons\nanoloot\skip.mp3]])
+        PlaySoundFile([[Interface\Addons\nanoloot_Midnight\skip.mp3]])
         NanoLoot.UI.RenderLoot()
     end)
 
@@ -241,7 +241,7 @@ local function CreateLootBar(parent, index, lootInfo)
     skipButton:SetScript("OnClick", function(_, motion)
         if not motion then return end
         table.remove(NanoLootDB.LootList, index)
-        PlaySoundFile([[Interface\Addons\nanoloot\skip.mp3]])
+        PlaySoundFile([[Interface\Addons\nanoloot_Midnight\skip.mp3]])
         NanoLoot.UI.RenderLoot()
     end)
 
@@ -268,7 +268,7 @@ local function CreateLootBar(parent, index, lootInfo)
     messageButton:SetScript("OnClick", function(_, motion)
         if not motion then return end
         NanoLoot.Utilities.SendLootChatMessage(lootInfo)
-        PlaySoundFile([[Interface\Addons\nanoloot\send_message.mp3]])
+        PlaySoundFile([[Interface\Addons\nanoloot_Midnight\send_message.mp3]])
     end)
 end
 
@@ -279,13 +279,13 @@ local function UpdateLootBar(index, lootInfo)
     _G["NANOLOOT_LOOT_BAR_MSG_" .. index]:SetScript("OnClick", function(_, motion)
         if not motion then return end
         NanoLoot.Utilities.SendLootChatMessage(lootInfo)
-        PlaySoundFile([[Interface\Addons\nanoloot\send_message.mp3]])
+        PlaySoundFile([[Interface\Addons\nanoloot_Midnight\send_message.mp3]])
     end)
 
     _G["NANOLOOT_LOOT_BAR_CLEAR_" .. index]:SetScript("OnClick", function(_, motion)
         if not motion then return end
         table.remove(NanoLootDB.LootList, index)
-        PlaySoundFile([[Interface\Addons\nanoloot\skip.mp3]])
+        PlaySoundFile([[Interface\Addons\nanoloot_Midnight\skip.mp3]])
         NanoLoot.UI.RenderLoot()
     end)
 

@@ -16,7 +16,9 @@ local function NanoLootEventHandler(_, event, ...)
         local inDungeonOrRaid = instanceType == 'party' or instanceType == 'raid'
         local listNotAtMax = #NanoLootDB.LootList ~= NanoLoot.Globals.NANOLOOT_LOOTLIST_LIMIT
         local rareOrEpic = rarity == 3 or rarity == 4
-        local equippable = itemType == 2 or itemType == 4 or itemType == 9
+        -- itemType: 2=Armor, 4=Weapon, 9=Container (bag slots)
+        -- If itemType is nil (async loading), allow rare/epic items through since they're likely equippable in dungeon/raid
+        local equippable = itemType == nil or itemType == 2 or itemType == 4 or itemType == 9
         local shouldHandle = inInstance and inDungeonOrRaid and listNotAtMax and rareOrEpic and equippable
 
         -- Debug:
@@ -36,7 +38,7 @@ local function NanoLootEventHandler(_, event, ...)
                 itemSubType = itemSubType
             }
             table.insert(NanoLootDB.LootList, loot)
-            GetItemInfo(link)
+            C_Item.GetItemInfo(link)
             NanoLoot.UI.RenderLoot()
         end
     end
@@ -64,7 +66,7 @@ loadingEvents:RegisterEvent("PLAYER_LOGOUT")
 loadingEvents:SetScript(
     "OnEvent",
     function(_, event, arg1)
-        if event == "ADDON_LOADED" and arg1 == "nanoloot" then
+        if event == "ADDON_LOADED" and arg1 == "nanoloot_Midnight" then
             if not NanoLootDB then
                 NanoLootDB = {}
                 NanoLootDB.LootList = {}

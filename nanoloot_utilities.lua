@@ -66,11 +66,30 @@ local function LootInfo(...)
     local class       = select(2, GetPlayerInfoByGUID(guid))
     local classColor  = C_ClassColor.GetClassColor(class)
     local classPlayer = classColor:WrapTextInColorCode(player)
-    local rarity      = select(3, GetItemInfo(link))
-    local itemLevel   = select(4, GetItemInfo(link))
     local itemID      = info[1]:match("item:(%d*):")
-    local itemType    = select(12, GetItemInfo(link))
-    local itemSubType = select(13, GetItemInfo(link))
+
+    -- Use C_Item.GetItemInfo (namespaced in 10.2.6+) with single call for efficiency
+    local itemName, _, rarity, itemLevel, _, _, _, _, _, _, _, itemType, itemSubType = C_Item.GetItemInfo(link)
+
+    -- Handle async item data - if nil, extract rarity from link color code
+    -- Link format: |cffRRGGBB|Hitem:...|h[Name]|h|r
+    -- Rarity colors: Poor=9d9d9d, Common=ffffff, Uncommon=1eff00, Rare=0070dd, Epic=a335ee
+    if not rarity then
+        local colorCode = info[1]:match("|cff(%x%x%x%x%x%x)")
+        if colorCode then
+            local rarityMap = {
+                ["9d9d9d"] = 0, -- Poor
+                ["ffffff"] = 1, -- Common
+                ["1eff00"] = 2, -- Uncommon
+                ["0070dd"] = 3, -- Rare
+                ["a335ee"] = 4, -- Epic
+                ["ff8000"] = 5, -- Legendary
+                ["e6cc80"] = 6, -- Artifact
+                ["00ccff"] = 7, -- Heirloom
+            }
+            rarity = rarityMap[colorCode:lower()] or 1
+        end
+    end
 
     return player, classPlayer, link, rarity, itemLevel, itemID, itemType, itemSubType
 end

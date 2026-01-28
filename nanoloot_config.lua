@@ -1,27 +1,31 @@
-local function colorCallback(restore)
-    local newR, newG, newB, newA;
-    if restore then
-        -- The user bailed, we extract the old color from the table created by ShowColorPicker.
-        newR, newG, newB, newA = unpack(restore);
+local function colorCallback(previousValues)
+    local newR, newG, newB
+    if previousValues then
+        -- The user cancelled, restore the old color
+        newR, newG, newB = unpack(previousValues)
     else
-        -- Something changed
-        newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB();
+        -- Get the new color from ColorPickerFrame
+        newR, newG, newB = ColorPickerFrame:GetColorRGB()
     end
 
-    -- Update our internal storage.
+    -- Update our internal storage
     NanoLootDB.TitleBarBackground = { newR, newG, newB }
 
-    -- And update any UI elements that use this color...
-    _G["NANOLOOT_TITLE_BAR"]:SetBackdropColor(unpack({ newR, newG, newB }))
+    -- And update any UI elements that use this color
+    _G["NANOLOOT_TITLE_BAR"]:SetBackdropColor(newR, newG, newB)
 end
 
 local function ShowColorPicker(r, g, b, changedCallback)
-    ColorPickerFrame.previousValues = { r, g, b };
-    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc =
-    changedCallback, changedCallback, changedCallback;
-    ColorPickerFrame:SetColorRGB(r, g, b);
-    ColorPickerFrame:Hide(); -- Need to run the OnShow handler.
-    ColorPickerFrame:Show();
+    -- Use the modern ColorPickerFrame API (10.2.5+)
+    local info = {
+        swatchFunc = changedCallback,
+        cancelFunc = changedCallback,
+        r = r,
+        g = g,
+        b = b,
+        hasOpacity = false,
+    }
+    ColorPickerFrame:SetupColorPickerAndShow(info)
 end
 
 local function GetCurrentClassColour()

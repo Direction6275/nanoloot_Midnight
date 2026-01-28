@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 120000
 ## X-Curse-Project-ID: 733068
 ## Title: |cff9560FFnano|r|cffd5bfffloot|r
 ## Notes: A tiny window for tracking who looted what.
@@ -10,10 +10,10 @@
 ## SavedVariables: NanoLootDB
 
 Elements\embeds.xml
-TbdWidgets\Dropdown.lua
-TbdWidgets\Dropdown.xml
 TbdWidgets\Listview.lua
 TbdWidgets\Listview.xml
+TbdWidgets\Dropdown.lua
+TbdWidgets\Dropdown.xml
 nanoloot_globals.lua
 nanoloot_utilities.lua
 nanoloot_ui.lua
