@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 120000
 ## X-Curse-Project-ID: 733068
 ## Title: |cff9560FFnano|r|cffd5bfffloot|r
 ## Notes: A tiny window for tracking who looted what.
